@@ -1,0 +1,145 @@
+package gui;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ClientFrame extends JPanel {
+
+	private JPanel backgroundPanel;
+	private Image backgroundImage;
+
+	private JPanel borderPanel;
+	// 메인보드
+	private JPanel mainPanel;
+	private JTextArea mainBoard;
+
+	// ip 컴포넌트
+	private JPanel ipPanel;
+	private JLabel ipLabel;
+	private JTextField inputIp;
+
+	// 포트패널
+	private JPanel portPanel;
+	private JLabel portLabel;
+	private JTextField inputPort;
+	private JButton connectBtn;
+
+	public ClientFrame() {
+		initData();
+		setInitLayout();
+		addEventListener();
+	}
+
+	private void initData() {
+		// 이미지
+		backgroundPanel = new BackgroundPanel();
+		backgroundImage = new ImageIcon("img/back.jpg").getImage();
+
+		// 보더 패널
+		borderPanel = new JPanel();
+		borderPanel.setLayout(null);
+
+//		// 메인 패널
+//		mainPanel = new JPanel();
+//		mainBoard = new JTextArea();
+
+		// IP 컴포넌트
+		ipPanel = new JPanel();
+		ipLabel = new JLabel("HOST IP");
+		inputIp = new JTextField(10);
+
+		// 포트패널
+		portPanel = new JPanel();
+		portLabel = new JLabel("PORT NUMBER");
+		inputPort = new JTextField(10);
+		
+		connectBtn = new JButton("Connect");
+		inputPort.setText("10001");
+	}
+
+	private void setInitLayout() {
+
+		setSize(400, 500);
+		setLayout(null); // 좌표 기반 설정
+
+		backgroundPanel.setSize(getWidth(), getHeight());
+		backgroundPanel.setLayout(null);
+		add(backgroundPanel);
+
+		// 보더 패널 설정
+		borderPanel.setBounds(30, 20, 340, 500);
+		backgroundPanel.add(borderPanel);
+
+		// IP 컴포넌트
+		ipPanel.setBounds(30, 40, 280, 50);
+		ipPanel.setBackground(new Color(0, 0, 0, 0));
+		ipPanel.add(ipLabel);
+		ipPanel.add(inputIp);
+		borderPanel.add(ipPanel);
+
+		// 포트패널 컴포넌트
+		portPanel.setBounds(30, 100, 280, 50);
+		portPanel.setBackground(new Color(0, 0, 0, 0));
+		portPanel.setFont(new Font(null));
+		portPanel.add(portLabel);
+		portPanel.add(inputPort);
+		portPanel.add(connectBtn);
+		borderPanel.add(portPanel);
+
+//		// 메인패널 컴포넌트
+//		mainPanel.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 5), "Client"));
+//		mainPanel.setBounds(30, 160, 280, 300);
+//		mainPanel.setBackground(Color.WHITE);
+//		mainPanel.add(mainBoard);
+//
+//		// 보더 패널에 메인 패널 넣기
+//		borderPanel.add(mainPanel);
+		
+		inputIp.setText("127.0.0.1");
+		inputPort.setText("10001");
+
+		setVisible(true);
+	}
+
+	private void addEventListener() {
+		connectBtn.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				// 이벤트 핸들러
+			}
+		});
+	}
+
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("Client Frame");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(400, 500);
+		frame.add(new ClientFrame());
+		frame.setVisible(true);
+		System.out.println("클라이언트 접속");
+	}
+
+	// BackgroundPanel 클래스 정의
+	class BackgroundPanel extends JPanel {
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		}
+	}
+}

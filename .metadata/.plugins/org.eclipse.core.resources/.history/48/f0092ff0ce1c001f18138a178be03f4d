@@ -1,0 +1,32 @@
+package mychat;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import javax.swing.JTextArea;
+
+public class Client {
+	ClientFrame clientFrame;
+	
+	private ServerSocket serverSocket;
+	private Socket socket;
+	
+	private JTextArea mainBoard;
+	
+	private FileWriter fileWriter;
+	
+	private BufferedReader reader;
+	private BufferedWriter writer;
+	
+	private static final int PORT = 10001;
+	
+
+	public void startClient() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

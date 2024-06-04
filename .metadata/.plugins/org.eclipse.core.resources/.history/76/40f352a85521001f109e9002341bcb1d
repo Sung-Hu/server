@@ -1,0 +1,33 @@
+package httphu;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
+
+public class http {
+	public static void main(String[] args) {
+		
+	
+	String urlString = "https://www.daum.net/";
+	
+	URL url;
+	try {
+		url = new URL(urlString);
+		HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+		
+		conn.setRequestMethod("GET");
+		
+		int responseCode = conn.getResponseCode();
+		
+		System.out.println(responseCode);
+	} catch (MalformedURLException e) {
+		e.printStackTrace();
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	
+	
+	}
+}

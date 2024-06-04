@@ -1,0 +1,27 @@
+package socket;
+
+import java.net.ServerSocket;
+import java.net.Socket;
+
+import javax.swing.JTextArea;
+
+import gui.ServerFrame;
+import lombok.Data;
+@Data
+public class Server {
+	private ServerFrame serverFrame;
+	private ServerSocket serverSocket;
+	private Socket socket;
+	private JTextArea mainBoard;
+	
+	public Server() {
+		serverFrame = new ServerFrame(this);
+		mainBoard = serverFrame.getMainBord();
+		
+	}
+	
+	public void startServer() {}
+	
+	
+
+}

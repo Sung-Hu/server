@@ -1,0 +1,16 @@
+package gui;
+
+import javax.swing.JFrame;
+
+
+public class ServerFrame extends JFrame {
+	
+	BackgroundPanel backgroundPanel;
+
+	
+	public ServerFrame() {
+		initData();
+		setInitLayout();
+		addEventListener();
+	}
+}

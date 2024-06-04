@@ -1,0 +1,9 @@
+package ch01;
+
+public class Plastic {
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "플라스틱입니다";
+	}
+}

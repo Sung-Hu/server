@@ -1,0 +1,219 @@
+package mychat2;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.ScrollPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.PrintWriter;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+public class ClientFrame extends JFrame {
+
+	private ScrollPane scrollPane;
+	private BackgroundPanel backgroundPanel;
+	private JPanel mainPanel;
+	private JTextArea mainBoard;
+	private JPanel portPanel;
+	private JLabel portLabel;
+	private JPanel ipPanel;
+	private JLabel ipLabel;
+	private JTextField inputPort;
+	private JTextField inputIp;
+	private JButton connectBtn;
+	private JTextArea messageArea;
+	private JTextField textField;
+	private PrintWriter out;
+	private JPanel idPanel;
+	private JLabel idLabel;
+	private JTextField inputID;
+
+	public ClientFrame() {
+		initData();
+		initLayout();
+		initListener();
+	}
+
+	private void initData() {
+		backgroundPanel = new BackgroundPanel();
+		
+		// 메인
+		mainPanel = new JPanel();
+		mainBoard = new JTextArea();
+		
+		scrollPane = new ScrollPane();
+		
+		// 포트
+		portPanel = new JPanel();
+		portLabel = new JLabel("PORT NUMBER");
+		
+		// 아이피
+		inputPort = new JTextField(10);
+		ipPanel = new JPanel();
+		ipLabel = new JLabel("IP ADDRESS");
+		inputIp = new JTextField(10);
+		
+		// 버튼
+		connectBtn = new JButton("Connect");
+		
+		// 메세지
+		messageArea = new JTextArea(8, 40);
+		textField = new JTextField(40);
+		
+		// 닉네임
+		idPanel = new JPanel();
+		idLabel = new JLabel("닉네임");
+		inputID = new JTextField(10);
+		
+		// 기본 값
+		inputPort.setText("5010");
+		inputIp.setText("localhost");
+		inputID.setText("너의 이름은?");
+	}
+
+	private void initLayout() {
+		setTitle("채팅채팅");
+		setSize(700, 820);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setLayout(null);
+
+		backgroundPanel.setSize(getWidth(), getHeight());
+		backgroundPanel.setLayout(null);
+		add(backgroundPanel);
+		
+		idPanel.setBounds(50, 40, 510, 50);
+		idPanel.setBackground(new Color(0, 0, 0, 0));
+		idPanel.add(idLabel);
+		idPanel.add(inputID);
+		backgroundPanel.add(idPanel);
+
+		ipPanel.setBounds(50, 70, 480, 50);
+		ipPanel.setBackground(new Color(0, 0, 0, 0));
+		ipPanel.add(ipLabel);
+		ipPanel.add(inputIp);
+		backgroundPanel.add(ipPanel);
+
+		portPanel.setBounds(50, 100, 550, 50);
+		portPanel.setBackground(new Color(0, 0, 0, 0));
+		portPanel.add(portLabel);
+		portPanel.add(inputPort);
+		portPanel.add(connectBtn);
+		backgroundPanel.add(portPanel);
+
+		mainPanel.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 5), "Chat"));
+		mainPanel.setBounds(40, 150, 600, 500);
+		mainPanel.setBackground(Color.WHITE);
+		mainBoard.setEnabled(false);
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.add(new JScrollPane(mainBoard), BorderLayout.CENTER);
+		backgroundPanel.add(mainPanel);
+
+		JPanel messagePanel = new JPanel();
+		messagePanel.setLayout(new BorderLayout());
+		messagePanel.setBounds(40, 660, 600, 100);
+		messagePanel.add(textField, BorderLayout.CENTER);
+		JButton sendButton = new JButton("Send");
+		messagePanel.add(sendButton, BorderLayout.EAST);
+		backgroundPanel.add(messagePanel);
+
+		setVisible(true);
+
+		sendButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendMessage();
+			}
+		});
+
+		textField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendMessage();
+			}
+		});
+	}
+
+	private void initListener() {
+		connectBtn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int port = Integer.parseInt(inputPort.getText());
+				String ip = inputIp.getText();
+				new Thread(() -> new Client(ip, port, ClientFrame.this)).start();
+			}
+		});
+	}
+
+	private void sendMessage() {
+		String id = inputID.getText();
+		String message = textField.getText();
+		if (!message.isEmpty()) {
+			out.println(id + " : " + message);
+		//	 appendMessage(inputID +" : " + message);
+			textField.setText("");
+		}
+	}
+
+	public JPanel getIdPanel() {
+		return idPanel;
+	}
+
+	public void setIdPanel(JPanel idPanel) {
+		this.idPanel = idPanel;
+	}
+
+	public JLabel getIdLabel() {
+		return idLabel;
+	}
+
+	public void setIdLabel(JLabel idLabel) {
+		this.idLabel = idLabel;
+	}
+
+	public JTextField getInputID() {
+		return inputID;
+	}
+
+	public void setInputID(JTextField inputID) {
+		this.inputID = inputID;
+	}
+
+	public void setPrintWriter(PrintWriter out) {
+		this.out = out;
+	}
+
+	public void appendMessage(String message) {
+		mainBoard.append(message + "\n");
+	}
+
+	private class BackgroundPanel extends JPanel {
+		private Image backgroundImage;
+
+		public BackgroundPanel() {
+			backgroundImage = new ImageIcon("img/grey.jpg").getImage();
+		}
+
+		@Override
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
+		}
+	}
+
+	public static void main(String[] args) {
+		new ClientFrame();
+	}
+}

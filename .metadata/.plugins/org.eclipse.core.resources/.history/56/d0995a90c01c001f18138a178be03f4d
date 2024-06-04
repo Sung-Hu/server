@@ -1,0 +1,167 @@
+package gui;
+
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.Socket;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class ClientFrame extends JPanel {
+	private CardLayout cardLayout;
+	private JPanel mainPanel;
+	private JPanel connectPanel;
+	private MsgPanel msgPanel;
+
+	private JPanel backgroundPanel;
+	private Image backgroundImage;
+
+	private JPanel borderPanel;
+	private JTextArea mainBoard;
+
+	// ip 컴포넌트
+	private JPanel ipPanel;
+	private JLabel ipLabel;
+	private JTextField inputIp;
+
+	// 포트패널
+	private JPanel portPanel;
+	private JLabel portLabel;
+	private JTextField inputPort;
+	private JButton connectBtn;
+
+	private Socket socket;
+	private BufferedReader reader;
+	private BufferedWriter writer;
+
+	public ClientFrame() {
+		initData();
+		setInitLayout();
+		addEventListener();
+	}
+
+	private void initData() {
+		// 이미지
+		backgroundPanel = new BackgroundPanel();
+		backgroundImage = new ImageIcon("img/back.jpg").getImage();
+		
+		cardLayout = new CardLayout();
+		mainPanel = new JPanel(cardLayout);
+		connectPanel = new JPanel(null);
+		msgPanel = new MsgPanel(this);
+
+		// 보더 패널
+		borderPanel = new JPanel(null);
+
+		// IP 컴포넌트
+		ipPanel = new JPanel();
+		ipLabel = new JLabel("HOST IP");
+		inputIp = new JTextField(10);
+
+		// 포트패널
+		portPanel = new JPanel();
+		portLabel = new JLabel("PORT NUMBER");
+		inputPort = new JTextField(10);
+
+		connectBtn = new JButton("Connect");
+		inputPort.setText("10001");
+	}
+
+	private void setInitLayout() {
+		setSize(400, 300);
+		setLayout(null); // 좌표 기반 설정
+
+		mainPanel.setSize(getWidth(), getHeight());
+		add(mainPanel);
+
+		connectPanel.setSize(getWidth(), getHeight());
+		mainPanel.add(connectPanel, "ConnectPanel");
+		mainPanel.add(msgPanel, "MsgPanel");
+
+		// 보더 패널 설정
+		borderPanel.setBounds(30, 20, 340, 200);
+		connectPanel.add(borderPanel);
+
+		// IP 컴포넌트
+		ipPanel.setBounds(30, 40, 280, 50);
+		ipPanel.setBackground(new Color(0, 0, 0, 0));
+		ipPanel.add(ipLabel);
+		ipPanel.add(inputIp);
+		borderPanel.add(ipPanel);
+
+		// 포트패널 컴포넌트
+		portPanel.setBounds(30, 100, 280, 50);
+		portPanel.setBackground(new Color(0, 0, 0, 0));
+		portPanel.setFont(new Font(null));
+		portPanel.add(portLabel);
+		portPanel.add(inputPort);
+		portPanel.add(connectBtn);
+		borderPanel.add(portPanel);
+
+		inputIp.setText("127.0.0.1");
+		inputPort.setText("10001");
+
+		setVisible(true);
+	}
+
+	private void addEventListener() {
+		connectBtn.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				String ip = inputIp.getText();
+				int port = Integer.parseInt(inputPort.getText());
+				connectToServer(ip, port);
+			}
+		});
+	}
+
+	private void connectToServer(String ip, int port) {
+		try {
+			socket = new Socket(ip, port);
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+			msgPanel.setSocket(socket);
+			msgPanel.setReader(reader);
+			msgPanel.setWriter(writer);
+			cardLayout.show(mainPanel, "MsgPanel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("Client Frame");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(400, 300);
+		frame.add(new ClientFrame());
+		frame.setVisible(true);
+		System.out.println("클라이언트 접속");
+	}
+
+	// BackgroundPanel 클래스 정의
+	class BackgroundPanel extends JPanel {
+		protected void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+		}
+	}
+}

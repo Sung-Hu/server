@@ -1,0 +1,77 @@
+package mychat2;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Vector;
+
+import javax.swing.SwingUtilities;
+
+public class Server {
+	private static ServerFrame serverFrame;
+    private static final int PORT = 5010;
+    private static Vector<PrintWriter> clientWriters = new Vector<>();
+
+    public Server() {
+        serverFrame = new ServerFrame();
+        SwingUtilities.invokeLater(() -> serverFrame.setVisible(true));
+        serverFrame.appendMessage("서버가 포트 " + PORT + "에서 시작되었습니다.");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("서버 시작");
+
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            while (true) {
+                Socket socket = serverSocket.accept();
+                serverFrame.appendMessage("클라이언트 연결됨: " + socket.getInetAddress());
+                new ClientHandler(socket).start();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static class ClientHandler extends Thread {
+        private Socket socket;
+        private PrintWriter out;
+        private BufferedReader in;
+
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+        }
+
+        public void run() {
+            try {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+                clientWriters.add(out);
+
+                String message;
+                while ((message = in.readLine()) != null) {
+                    System.out.println("수신됨: " + message);
+                    serverFrame.appendMessage("수신됨: " + message);
+                    broadcastMessage(message);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    socket.close();
+                    serverFrame.appendMessage("클라이언트 연결 해제됨: " + socket.getInetAddress());
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static void broadcastMessage(String message) {
+        for (PrintWriter writer : clientWriters) {
+            writer.println(message);
+        }
+    }
+}

@@ -1,0 +1,38 @@
+package gui;
+
+import javax.swing.JFrame;
+
+
+public class ServerFrame extends JFrame {
+	
+	BackgroundPanel backgroundPanel;
+
+	
+	public ServerFrame() {
+		initData();
+		setInitLayout();
+		addEventListener();
+	}
+	
+	private void initData() {
+		backgroundPanel = new BackgroundPanel();
+	}
+
+	private void setInitLayout() {
+
+		setTitle("서버");
+		setSize(400, 600);
+		setLayout(null); // 좌표 기반 설정
+
+		backgroundPanel.setSize(getWidth(), getHeight());
+		backgroundPanel.setLayout(null);
+		add(backgroundPanel);
+
+	}
+
+	private void addEventListener() {
+	}
+
+	
+	
+}

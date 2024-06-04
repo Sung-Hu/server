@@ -1,0 +1,127 @@
+package mychat;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Vector;
+import javax.swing.JTextArea;
+
+
+public class Server {
+
+	ServerFrame serverFrame;
+	private ServerSocket serverSocket;
+	private Socket socket;
+	private JTextArea mainBoard;
+	private FileWriter fileWriter;
+	private BufferedReader reader;
+	private BufferedWriter writer;
+	private static final int PORT = 10001;
+	private static Vector<USER> clientWriters = new Vector<>();
+	
+	public ServerFrame getServerFrame() {
+		return serverFrame;
+	}
+
+
+	public void setServerFrame(ServerFrame serverFrame) {
+		this.serverFrame = serverFrame;
+	}
+
+
+	public ServerSocket getServerSocket() {
+		return serverSocket;
+	}
+
+
+	public void setServerSocket(ServerSocket serverSocket) {
+		this.serverSocket = serverSocket;
+	}
+
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
+	}
+
+
+	public JTextArea getMainBoard() {
+		return mainBoard;
+	}
+
+
+	public void setMainBoard(JTextArea mainBoard) {
+		this.mainBoard = mainBoard;
+	}
+
+
+	public FileWriter getFileWriter() {
+		return fileWriter;
+	}
+
+
+	public void setFileWriter(FileWriter fileWriter) {
+		this.fileWriter = fileWriter;
+	}
+
+
+	public BufferedReader getReader() {
+		return reader;
+	}
+
+
+	public void setReader(BufferedReader reader) {
+		this.reader = reader;
+	}
+
+
+	public BufferedWriter getWriter() {
+		return writer;
+	}
+
+
+	public void setWriter(BufferedWriter writer) {
+		this.writer = writer;
+	}
+
+
+	public static Vector<USER> getClientWriters() {
+		return clientWriters;
+	}
+
+
+	public static void setClientWriters(Vector<USER> clientWriters) {
+		Server.clientWriters = clientWriters;
+	}
+
+
+	public static int getPort() {
+		return PORT;
+	}
+
+
+	public void startServer() {
+		serverFrame = new ServerFrame(this);
+
+		mainBoard = serverFrame.getMainBoard();
+		try {
+			serverSocket = new ServerSocket(PORT);
+			serverFrame.getConnectBtn().setEnabled(false);
+			connectClient();
+		} catch (IOException e) {
+			serverFrame.getConnectBtn().setEnabled(true);
+		}
+	}
+	
+	
+	private class USER extends Thread{
+		
+	}
+}

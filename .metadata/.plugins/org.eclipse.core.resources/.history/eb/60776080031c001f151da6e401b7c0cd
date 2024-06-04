@@ -1,0 +1,54 @@
+package gui;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+
+public class ServerFrame extends JFrame {
+	
+	private BackgroundPanel backgroundPanel;
+	// 메인보드
+	private JPanel mainPanel;
+	private JTextArea mainBoard;
+	
+	
+	public ServerFrame() {
+		initData();
+		setInitLayout();
+		addEventListener();
+	}
+	
+	private void initData() {
+		backgroundPanel = new BackgroundPanel();
+		
+		// 메인 패널
+		mainPanel = new JPanel();
+		mainBoard = new JTextArea();
+
+	}
+
+	private void setInitLayout() {
+
+		setTitle("서버");
+		setSize(400, 600);
+		setLayout(null); // 좌표 기반 설정
+
+		backgroundPanel.setSize(getWidth(), getHeight());
+		backgroundPanel.setLayout(null);
+		add(backgroundPanel);
+		
+		setVisible(true);
+	}
+
+	private void addEventListener() {
+			
+	}
+
+	
+	// 테스트 코드 
+	public static void main(String[] args) {
+		new ServerFrame();
+	}
+	
+}
